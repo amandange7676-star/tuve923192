@@ -1,7 +1,34 @@
-const changedFiles = new Set();
+var changedFiles = new Set();
+
+function syncChangedFilesToSession() {
+    sessionStorage.setItem(
+        "changedFiles",
+        JSON.stringify(Array.from(changedFiles))
+    );
+}
+
+function loadChangedFilesFromSession() {
+    const stored = sessionStorage.getItem("changedFiles");
+    if (stored) {
+        try {
+            changedFiles = new Set(JSON.parse(stored));
+        } catch (e) {
+            console.warn("Failed to restore changedFiles", e);
+            changedFiles = new Set();
+        }
+    }
+}
+
+function clearChangedFilesSession() {
+    changedFiles.clear();
+    sessionStorage.removeItem("changedFiles");
+}
+
 
 $(document).ready(function () {
-    // GLOBAL (top of file)
+    loadChangedFilesFromSession();
+    console.log("Restored changed files:", Array.from(changedFiles));
+
 
     // alert("EditModeScript loaded");
     // Initialization
@@ -131,6 +158,8 @@ function uploadImgData(file, originalEl) {
             }
              //  TRACK IMAGE FILE
              changedFiles.add(originalSrc);
+             syncChangedFilesToSession();
+
              console.log('changedFiles: ', changedFiles)
     },
         error: function (xhr) {
@@ -1182,6 +1211,8 @@ function initializeInputEditor(anchor) {
             var editedHeader = $('#header').html();
             filesDetailsMap["header.html"] = editedHeader;
             changedFiles.add("header.html");
+            syncChangedFilesToSession();
+
             changesInHeader = false; // Reset flag
         }
 
@@ -1190,6 +1221,8 @@ function initializeInputEditor(anchor) {
             var editedFooter = $('#footer').html();
             filesDetailsMap["footer.html"] = editedFooter;
             changedFiles.add("footer.html");
+            syncChangedFilesToSession();
+
             changesInFooter = false; // Reset flag
         }
 
@@ -1206,6 +1239,8 @@ function initializeInputEditor(anchor) {
                 filesDetailsMap[pageTitle + ".html"] = editedHTML.html();
             }
             changedFiles.add(fileName);
+            syncChangedFilesToSession();
+
             console.log("changedFiles",changedFiles)
             changesInMainContent = false;
         }
@@ -2241,7 +2276,7 @@ function uploadeditedproject() {
                 alert('changes has been Uploaded.');
                 alert(response.message);
                  // reset ONLY after successful upload
-                changedFiles.clear();
+                 clearChangedFilesSession();
             } else {
                 alert(response.message || "Upload failed");
             }
