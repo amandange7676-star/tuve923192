@@ -1232,7 +1232,9 @@ function initializeInputEditor(anchor) {
             editedHTML.find('#footer').html('');
             editedHTML.find('input[type="text"].hidden.selectedPageName').remove();
 
-            var pageTitle = $('title').text().trim().toLowerCase();
+            var pageTitle = $('title').text().trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');;
+
+            let fileName = pageTitle === "home" ? "index.html" : pageTitle + ".html";
             if (pageTitle === "home") {
                 filesDetailsMap["index.html"] = editedHTML.html();
             } else {
