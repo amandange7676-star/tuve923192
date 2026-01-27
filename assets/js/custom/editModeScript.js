@@ -2254,12 +2254,89 @@ function getCookie(name) {
     return null;
 }
 
+//loader for uploadeditedproject 
+function showProjectLoader(message = "Uploading changes, please wait…") {
+    // If loader already exists, just update message and show
+    let loader = $('#project-loader');
+    if (!loader.length) {
+        // Create the loader dynamically
+        loader = $(`
+            <div id="project-loader">
+                <div class="pl-circle"></div>
+                <div class="pl-text">${message}</div>
+            </div>
+        `).appendTo('body');
+
+        // Inject CSS dynamically if not present
+        if (!$('#project-loader-styles').length) {
+            const css = `
+                #project-loader {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: #0f172ae3;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    flex-direction: column;
+                    z-index: 99999;
+                    opacity: 0;
+                    pointer-events: none;
+                    transition: opacity 0.4s ease;
+                }
+
+                #project-loader.active {
+                    opacity: 1;
+                    pointer-events: all;
+                }
+
+                .pl-circle {
+                    width: 80px;
+                    height: 80px;
+                    border: 6px solid #64748b;
+                    border-top-color: #38bdf8;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                    margin-bottom: 12px;
+                }
+
+                .pl-text {
+                    color: #e2e8f0;
+                    font-size: 18px;
+                    letter-spacing: 1px;
+                    font-family: sans-serif;
+                }
+
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
+            `;
+            $('<style>', { id: 'project-loader-styles', text: css }).appendTo('head');
+        }
+    }
+
+    // Update message and show
+    loader.find('.pl-text').text(message);
+    loader.addClass('active');
+}
+
+function hideProjectLoader() {
+    const loader = $('#project-loader');
+    loader.removeClass('active');
+}
+
+//end of loader of code
+
 
 function uploadeditedproject() {
     const projectId = getCookie("UpdateContentAddSectionprojectId");
     const clientName = getCookie("clientName");
     const clientProjectName = getCookie("clientProjectName");
-    alert('Changes are uploading please wait');
+    // alert('Changes are uploading please wait');
+    showProjectLoader("Uploading changes, please wait…");
+
   //  SHOW LOADER
     $('#project-loader').addClass('active');
     $.ajax({
@@ -2276,7 +2353,7 @@ function uploadeditedproject() {
         },
         success: function (response) {
              // HIDE LOADER
-        $('#project-loader').removeClass('active');
+              hideProjectLoader();
             if (response.status === 200) {
                 alert('changes has been Uploaded.');
                 alert(response.message);
@@ -2289,7 +2366,7 @@ function uploadeditedproject() {
         },
         error: function (xhr) {
              // HIDE LOADER
-        $('#project-loader').removeClass('active');
+            hideProjectLoader();
             console.error(xhr.responseText);
             alert("Server error occurred");
         }
