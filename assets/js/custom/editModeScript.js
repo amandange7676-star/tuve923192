@@ -1232,14 +1232,17 @@ function initializeInputEditor(anchor) {
             editedHTML.find('#footer').html('');
             editedHTML.find('input[type="text"].hidden.selectedPageName').remove();
 
-            var pageTitle = $('title').text().trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');;
+            var rawTitle = $('title').text().trim();
 
-            let fileName = pageTitle === "home" ? "index.html" : pageTitle + ".html";
-            if (pageTitle === "home") {
-                filesDetailsMap["index.html"] = editedHTML.html();
-            } else {
-                filesDetailsMap[pageTitle + ".html"] = editedHTML.html();
-            }
+            var pageName = rawTitle
+                .replace(/\s+/g, '_')
+                .replace(/[^a-zA-Z0-9_]/g, '');
+
+            var fileName = rawTitle.toLowerCase() === "home"
+                ? "index.html"
+                : pageName + ".html";
+
+            filesDetailsMap[fileName] = editedHTML.html();
             changedFiles.add(fileName);
             syncChangedFilesToSession();
 
