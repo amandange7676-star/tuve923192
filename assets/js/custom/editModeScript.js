@@ -1,6 +1,7 @@
+const changedFiles = new Set();
+
 $(document).ready(function () {
     // GLOBAL (top of file)
-    const changedFiles = new Set();
 
     // alert("EditModeScript loaded");
     // Initialization
