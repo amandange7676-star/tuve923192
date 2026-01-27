@@ -131,6 +131,7 @@ function uploadImgData(file, originalEl) {
             }
              //  TRACK IMAGE FILE
              changedFiles.add(originalSrc);
+             console.log('changedFiles: ', changedFiles)
     },
         error: function (xhr) {
             alert("Upload error: " + xhr.responseText);
@@ -1205,6 +1206,7 @@ function initializeInputEditor(anchor) {
                 filesDetailsMap[pageTitle + ".html"] = editedHTML.html();
             }
             changedFiles.add(fileName);
+            console.log("changedFiles",changedFiles)
             changesInMainContent = false;
         }
 
