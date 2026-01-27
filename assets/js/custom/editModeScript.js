@@ -2226,8 +2226,7 @@ function uploadeditedproject() {
             client_name: clientName,
             client_project_name: clientProjectName,
             changed_files: JSON.stringify(Array.from(changedFiles))
-            // reset after successful upload tracking files changes
-            changedFiles.clear();
+        
         },
         beforeSend: function () {
             console.log("Uploading changes...");
@@ -2238,9 +2237,12 @@ function uploadeditedproject() {
             if (response.status === 200) {
                 alert('changes has been Uploaded.');
                 alert(response.message);
+                 // reset ONLY after successful upload
+                changedFiles.clear();
             } else {
                 alert(response.message || "Upload failed");
             }
+            
         },
         error: function (xhr) {
              // HIDE LOADER
