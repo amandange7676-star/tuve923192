@@ -1,4 +1,7 @@
 $(document).ready(function () {
+    // GLOBAL (top of file)
+    const changedFiles = new Set();
+
     // alert("EditModeScript loaded");
     // Initialization
     var wrapper = $('#wrapper').addClass('editableSection');
@@ -125,6 +128,8 @@ function uploadImgData(file, originalEl) {
                 $(originalEl).css('background-image',
                     `url("${previewPath}?v=${Date.now()}")`);
             }
+             //  TRACK IMAGE FILE
+             changedFiles.add(originalSrc);
     },
         error: function (xhr) {
             alert("Upload error: " + xhr.responseText);
@@ -1174,6 +1179,7 @@ function initializeInputEditor(anchor) {
         if (changesInHeader && originalHeaderContent !== $('#header').html()) {
             var editedHeader = $('#header').html();
             filesDetailsMap["header.html"] = editedHeader;
+            changedFiles.add("header.html");
             changesInHeader = false; // Reset flag
         }
 
@@ -1181,6 +1187,7 @@ function initializeInputEditor(anchor) {
         if (changesInFooter && originalFooterContent !== $('#footer').html()) {
             var editedFooter = $('#footer').html();
             filesDetailsMap["footer.html"] = editedFooter;
+            changedFiles.add("footer.html");
             changesInFooter = false; // Reset flag
         }
 
@@ -1196,6 +1203,7 @@ function initializeInputEditor(anchor) {
             } else {
                 filesDetailsMap[pageTitle + ".html"] = editedHTML.html();
             }
+            changedFiles.add(fileName);
             changesInMainContent = false;
         }
 
@@ -2216,7 +2224,10 @@ function uploadeditedproject() {
         type: "POST",
         data: {
             client_name: clientName,
-            client_project_name: clientProjectName
+            client_project_name: clientProjectName,
+            changed_files: JSON.stringify(Array.from(changedFiles))
+            // reset after successful upload tracking files changes
+            changedFiles.clear();
         },
         beforeSend: function () {
             console.log("Uploading changes...");
